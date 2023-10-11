@@ -18,6 +18,7 @@ import (
 	"github.com/hashicorp/consul/testing/deployer/topology"
 
 	"github.com/hashicorp/consul/api"
+	"github.com/hashicorp/consul/sdk/testutil"
 	"github.com/hashicorp/consul/sdk/testutil/retry"
 	libassert "github.com/hashicorp/consul/test/integration/consul-container/libs/assert"
 	"github.com/hashicorp/consul/test/integration/consul-container/libs/utils"
@@ -52,13 +53,13 @@ func newAsserter(sp sprawlLite) *asserter {
 	}
 }
 
-func (a *asserter) mustGetHTTPClient(t *testing.T, cluster string) *http.Client {
+func (a *asserter) mustGetHTTPClient(t testutil.TestingTB, cluster string) *http.Client {
 	client, err := a.httpClientFor(cluster)
 	require.NoError(t, err)
 	return client
 }
 
-func (a *asserter) mustGetAPIClient(t *testing.T, cluster string) *api.Client {
+func (a *asserter) mustGetAPIClient(t testutil.TestingTB, cluster string) *api.Client {
 	clu := a.sp.Topology().Clusters[cluster]
 	cl, err := a.sp.APIClientForCluster(clu.Name, "")
 	require.NoError(t, err)
@@ -220,7 +221,7 @@ func (a *asserter) UpstreamEndpointHealthy(t *testing.T, svc *topology.Service, 
 // the body, and response with response.Body already Closed.
 //
 // We treat 400, 503, and 504s as retryable errors
-func (a *asserter) fortioFetch2Upstream(t *testing.T, fortioSvc *topology.Service, upstream *topology.Upstream, path string) (body []byte, res *http.Response) {
+func (a *asserter) fortioFetch2Upstream(t testutil.TestingTB, fortioSvc *topology.Service, upstream *topology.Upstream, path string) (body []byte, res *http.Response) {
 	t.Helper()
 
 	// TODO: fortioSvc.ID.Normalize()? or should that be up to the caller?
@@ -259,10 +260,10 @@ func (a *asserter) FortioFetch2HeaderEcho(t *testing.T, fortioSvc *topology.Serv
 	path := (fmt.Sprintf("/?header=%s:%s", kPassphrase, passphrase))
 
 	retry.RunWith(&retry.Timer{Timeout: 60 * time.Second, Wait: time.Millisecond * 500}, t, func(r *retry.R) {
-		_, res := a.fortioFetch2Upstream(t, fortioSvc, upstream, path)
-		require.Equal(t, http.StatusOK, res.StatusCode)
+		_, res := a.fortioFetch2Upstream(r, fortioSvc, upstream, path)
+		require.Equal(r, http.StatusOK, res.StatusCode)
 		v := res.Header.Get(kPassphrase)
-		require.Equal(t, passphrase, v)
+		require.Equal(r, passphrase, v)
 	})
 }
 
@@ -276,8 +277,8 @@ func (a *asserter) FortioFetch2FortioName(t *testing.T, fortioSvc *topology.Serv
 	path := "/debug?env=dump"
 
 	retry.RunWith(&retry.Timer{Timeout: 60 * time.Second, Wait: time.Millisecond * 500}, t, func(r *retry.R) {
-		body, res := a.fortioFetch2Upstream(t, fortioSvc, upstream, path)
-		require.Equal(t, http.StatusOK, res.StatusCode)
+		body, res := a.fortioFetch2Upstream(r, fortioSvc, upstream, path)
+		require.Equal(r, http.StatusOK, res.StatusCode)
 
 		// TODO: not sure we should retry these?
 		m := fortioNameRE.FindStringSubmatch(string(body))
