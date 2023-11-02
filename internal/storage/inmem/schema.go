@@ -21,6 +21,8 @@ const (
 	indexNameID    = "id"
 	indexNameOwner = "owner"
 
+	indexNameTenancy = "tenancy"
+
 	metaKeyEventIndex = "index"
 )
 
@@ -52,6 +54,12 @@ func newDB() (*memdb.MemDB, error) {
 						AllowMissing: true,
 						Unique:       false,
 						Indexer:      ownerIndexer{},
+					},
+					indexNameTenancy: {
+						Name:         indexNameTenancy,
+						AllowMissing: true,
+						Unique:       false,
+						Indexer:      tenancyIndexer{},
 					},
 				},
 			},
@@ -130,6 +138,48 @@ func (i ownerIndexer) FromObject(raw any) (bool, []byte, error) {
 		return false, nil, nil
 	}
 	return true, indexFromID(res.Owner, true), nil
+}
+
+type tenancyIndexer struct{}
+
+func (i tenancyIndexer) PrefixFromArgs(args ...any) ([]byte, error) {
+	fmt.Printf("**** In tenancy PrefixFromArgs: %+v", args)
+
+	if l := len(args); l != 1 {
+		return nil, fmt.Errorf("expected 1 arg, got: %d", l)
+	}
+
+	q, ok := args[0].(query)
+	if !ok {
+		return nil, fmt.Errorf("expected query, got: %T", args[0])
+	}
+	return q.indexPrefix(), nil
+}
+
+func (i tenancyIndexer) FromArgs(args ...any) ([]byte, error) {
+	fmt.Printf("**** In tenancy from args: %+v", args)
+
+	if l := len(args); l != 1 {
+		return nil, fmt.Errorf("expected 1 arg, got: %d", l)
+	}
+	tenancy, ok := args[0].(*pbresource.Tenancy)
+	if !ok {
+		return nil, fmt.Errorf("expected *pbresource.Tencnay, got: %T", args[0])
+	}
+	return indexFromTenancy(tenancy), nil
+}
+
+func (i tenancyIndexer) FromObject(raw any) (bool, []byte, error) {
+	fmt.Printf("**** In tenancy from object")
+	switch t := raw.(type) {
+	case *pbresource.ID:
+		return true, indexFromTenancy(t.Tenancy), nil
+	case *pbresource.Tenancy:
+		return true, indexFromTenancy(t), nil
+	case *pbresource.Resource:
+		return true, indexFromTenancy(t.Id.Tenancy), nil
+	}
+	return false, nil, fmt.Errorf("expected *pbresource.Resource or *pbresource.ID or *pbresource.Tenancy, got: %T", raw)
 }
 
 func indexFromType(t storage.UnversionedType) []byte {
