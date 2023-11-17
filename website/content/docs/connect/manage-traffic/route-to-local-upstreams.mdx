@@ -235,15 +235,15 @@ Apply the configuration by either running the [`consul config write` CLI command
 </Tab>
 </Tabs>
 
-### Explicit locality configuration on Kubernetes test clusters
+### Configure locality on Kubernetes test clusters explicitly
 
-If you are testing this feature with a local Kubernetes cluster (or in an environment where `topology.kubernetes.io` labels are not set), it is possible to explicitly provide each node's locality using `kubectl label`:
+You can explicitly configure locality for each Kubernetes node if you are testing locality-aware routing with a local Kubernetes cluster or in an environment where `topology.kubernetes.io` labels are not set. Run the `kubectl label node` command and specify the locality as arguments. The following example specifies the `us-east-1` region and `us-east-1a` zone for the node:
 
 ```shell-session
 kubectl label node $K8S_NODE topology.kubernetes.io/region="us-east-1" topology.kubernetes.io/zone="us-east-1a"
 ```
 
-After setting these values, you should see subsequent service and proxy registrations in your cluster inherit the values from their local Kubernetes node.
+After setting these values, subsequent service and proxy registrations in your cluster inherit the values from their local Kubernetes node.
 
 ## Observing routing changes
 
