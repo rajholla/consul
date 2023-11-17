@@ -325,6 +325,18 @@ Keep in mind the following:
   - Once Envoy failover configuration is in place, the specific timing of failover is determined by the downstream Envoy proxy, not Consul. Consul health status may not correspond 1-1 with Envoy's failover behavior, which is also dependent on outlier detection.
 </Tip>
 
+## Adjust load balancing and failover behavior
+
+You can adjust the global or per-service load balancing and failover behaviors of this feature by applying the property override Envoy extension. The property override extension allows you to set and remove individual properties on the Envoy resources Consul generates. Refer to [Configure Envoy proxy properties](/consul/docs/connect/proxies/envoy-extensions/usage/property-override) for additional information.
+
+1. Add the `EnvoyExtensions` configuration block to the service defaults or proxy defaults configuration entry.
+1. Configure the following settings  in the `EnvoyExtensions` configuration:
+- [`overprovisioning_factor`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/endpoint/v3/endpoint.proto#config-endpoint-v3-clusterloadassignment)
+- [outlier detection](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/outlier_detection.proto#config-cluster-v3-outlierdetection) configuration.
+1. Apply the configuration. Refer to [Apply the configuration entry](/consul/docs/connect/proxies/envoy-extensions/usage/property-override#apply-the-configuration-entry) for details.
+
+By default, Consul sets `overprovisioning_factor` to `100000`, which enforces total failover, and `max_ejection_percent` to `100`. Refer to the Envoy documentation about these fields before attempting to modify them.
+
 ## Troubleshooting
 
 If you do not see the expected priorities, verify that locality is configured in the Consul agent and that `PrioritizeByLocality` is enabled in your proxy defaults or service resolver configuration entry. When `PrioritizeByLocality` is enabled but the local proxy lacks locality configuration, Consul emits a warning log to indicate that the policy could not be applied:
