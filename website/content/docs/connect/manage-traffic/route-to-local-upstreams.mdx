@@ -327,7 +327,7 @@ Keep in mind the following:
 
 ## Troubleshooting
 
-If you do not see the expected priorities, verify that your locality configuration is in place and that you have enabled `PrioritizeByLocality` in your proxy defaults or service resolver. If `PrioritizeByLocality` is enabled but the local proxy lacks locality configuration, Consul will emit a warning log to indicate that the policy could not be applied:
+If you do not see the expected priorities, verify that locality is configured in the Consul agent and that `PrioritizeByLocality` is enabled in your proxy defaults or service resolver configuration entry. When `PrioritizeByLocality` is enabled but the local proxy lacks locality configuration, Consul emits a warning log to indicate that the policy could not be applied:
 
 ```
 `no local service locality provided, skipping locality failover policy`
