@@ -10,8 +10,6 @@ This topic describes how to enable locality-aware routing so that Consul can pri
 
 <EnterpriseAlert> This feature is available in Consul Enterprise. </EnterpriseAlert>
 
-Locality-aware routing is an advanced feature that may adversely impact service capacity if used incorrectly. By default, Consul routes all traffic to the nearest set of service instances and only fails over when no healthy instances are available in the nearest set. You should only follow these instructions when each set of external upstream instances within the same zone and region have enough capacity to handle requests from downstream service instances in their respective zones.
-
 ## Introduction
 
 By default, Consul balances traffic to all healthy upstream instances in the cluster, even if the instances are in different network zones. You can specify the cloud service provider (CSP) locality for Consul server agents and services registered to the service mesh, which enables several benefits:
@@ -19,7 +17,11 @@ By default, Consul balances traffic to all healthy upstream instances in the clu
 - Consul prioritizes the nearest upstream instances when routing traffic through the mesh.
 - When upstream service instances becomes unhealthy, Consul prioritizes failing over to instances that are in the same region as the downstream service. Refer to [Failover](/consul/docs/connect/traffic-management/failover) for additional information about failover strategies in Consul.
 
-When properly implemented, routing traffic to local upstreams can reduce latency and transfer costs associated with sending requests to other regions. 
+When properly implemented, routing traffic to local upstreams can reduce latency and transfer costs associated with sending requests to other regions.
+
+### Requirements
+
+Locality-aware routing is an advanced feature that may adversely impact service capacity if used incorrectly. By default, Consul routes all traffic to the nearest set of service instances and only fails over when no healthy instances are available in the nearest set. You should only follow these instructions when each set of external upstream instances within the same zone and region have enough capacity to handle requests from downstream service instances in their respective zones.
 
 ### Workflow
 
