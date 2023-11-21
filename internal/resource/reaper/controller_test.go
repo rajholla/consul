@@ -4,9 +4,10 @@
 package reaper
 
 import (
-	"github.com/hashicorp/consul/internal/resource/resourcetest"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/consul/internal/resource/resourcetest"
 
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -40,10 +41,10 @@ func TestReconcile_ResourceWithNoChildren(t *testing.T) {
 		require.NoError(t, err)
 
 		// Retrieve tombstone
-		listRsp, err := client.List(ctx, &pbresource.ListRequest{
+		listRsp, err := client.POCList(ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    resource.TypeV1Tombstone,
 			Tenancy: tenancy,
-		})
+		}}})
 		require.NoError(t, err)
 		require.Len(t, listRsp.Resources, 1)
 		tombstone := listRsp.Resources[0]
@@ -108,10 +109,10 @@ func TestReconcile_ResourceWithChildren(t *testing.T) {
 		require.NoError(t, err)
 
 		// Retrieve the tombstone
-		listRsp, err := client.List(ctx, &pbresource.ListRequest{
+		listRsp, err := client.POCList(ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    resource.TypeV1Tombstone,
 			Tenancy: writeRsp.Resource.Id.Tenancy,
-		})
+		}}})
 		require.NoError(t, err)
 		require.Len(t, listRsp.Resources, 1)
 		tombstone := listRsp.Resources[0]
@@ -126,10 +127,10 @@ func TestReconcile_ResourceWithChildren(t *testing.T) {
 		require.ErrorIs(t, controller.RequeueAfterError(secondPassDelay), rec.Reconcile(ctx, runtime, req))
 
 		// Verify 3 albums deleted
-		listRsp, err = client.List(ctx, &pbresource.ListRequest{
+		listRsp, err = client.POCList(ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    demo.TypeV2Album,
 			Tenancy: artist.Id.Tenancy,
-		})
+		}}})
 		require.NoError(t, err)
 		require.Empty(t, listRsp.Resources)
 
@@ -152,10 +153,10 @@ func TestReconcile_ResourceWithChildren(t *testing.T) {
 		require.Equal(t, codes.NotFound.String(), status.Code(err).String())
 
 		// Verify tombstones for 3 albums created
-		listRsp, err = client.List(ctx, &pbresource.ListRequest{
+		listRsp, err = client.POCList(ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    resource.TypeV1Tombstone,
 			Tenancy: artist.Id.Tenancy,
-		})
+		}}})
 		require.NoError(t, err)
 		require.Len(t, listRsp.Resources, numAlbums)
 	})
@@ -181,10 +182,10 @@ func TestReconcile_RequeueWithDelayWhenSecondPassDelayNotElapsed(t *testing.T) {
 		require.NoError(t, err)
 
 		// Retrieve tombstone
-		listRsp, err := client.List(ctx, &pbresource.ListRequest{
+		listRsp, err := client.POCList(ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    resource.TypeV1Tombstone,
 			Tenancy: writeRsp.Resource.Id.Tenancy,
-		})
+		}}})
 		require.NoError(t, err)
 		require.Len(t, listRsp.Resources, 1)
 		tombstone := listRsp.Resources[0]

@@ -27,7 +27,7 @@ func (s *Server) POCList(ctx context.Context, req *pbresource.POCListRequest) (*
 		requestTenancy = op.FilterByType.GetTenancy()
 	case *pbresource.POCListRequest_FilterByNamePrefix:
 		requestType = op.FilterByNamePrefix.GetType()
-		requestTenancy = op.FilterByNamePrefix.GetTenancy()	
+		requestTenancy = op.FilterByNamePrefix.GetTenancy()
 		name_prefix = op.FilterByNamePrefix.GetNamePrefix()
 	case *pbresource.POCListRequest_FilterByOwner:
 		resp, err := s.ListByOwner(ctx, &pbresource.ListByOwnerRequest{Owner: op.FilterByOwner.GetOwner()})
@@ -130,7 +130,7 @@ func (s *Server) validatePOCListRequest(requestType *pbresource.Type, requestTen
 	// }
 
 	var reg *resource.Registration
-	if requestType != nil{
+	if requestType != nil {
 		// Check type exists.
 		reg, err := s.resolveType(requestType)
 		if err != nil {
@@ -159,8 +159,6 @@ func (s *Server) validatePOCListRequest(requestType *pbresource.Type, requestTen
 	// if err := validateWildcardTenancy(requestTenancy, req.NamePrefix); err != nil {
 	// 	return nil, err
 	// }
-
-	
 
 	return reg, nil
 }

@@ -458,10 +458,10 @@ func (suite *controllerSuite) TestReconcile_TrafficPermissionsDelete_Destination
 		suite.client.MustDelete(suite.T(), tp2.Id)
 
 		// Ensure that no CTPs exist
-		rsp, err := suite.client.List(suite.ctx, &pbresource.ListRequest{
+		rsp, err := suite.client.POCList(suite.ctx, &pbresource.POCListRequest{Request: &pbresource.POCListRequest_FilterByType{FilterByType: &pbresource.POCListRequest_ListByTypeRequest{
 			Type:    pbauth.ComputedTrafficPermissionsType,
 			Tenancy: resource.DefaultNamespacedTenancy(),
-		})
+		}}})
 		require.NoError(suite.T(), err)
 		require.Empty(suite.T(), rsp.Resources)
 	})
