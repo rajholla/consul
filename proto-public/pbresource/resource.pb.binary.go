@@ -258,16 +258,6 @@ func (msg *POCListRequest_ListByNamePrefixRequest) UnmarshalBinary(b []byte) err
 }
 
 // MarshalBinary implements encoding.BinaryMarshaler
-func (msg *POCListRequest_ListByTenancyRequest) MarshalBinary() ([]byte, error) {
-	return proto.Marshal(msg)
-}
-
-// UnmarshalBinary implements encoding.BinaryUnmarshaler
-func (msg *POCListRequest_ListByTenancyRequest) UnmarshalBinary(b []byte) error {
-	return proto.Unmarshal(b, msg)
-}
-
-// MarshalBinary implements encoding.BinaryMarshaler
 func (msg *POCListRequest_ListByOwnerRequest) MarshalBinary() ([]byte, error) {
 	return proto.Marshal(msg)
 }

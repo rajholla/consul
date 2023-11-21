@@ -294,13 +294,9 @@ type UnversionedType struct {
 
 // UnversionedTypeFrom creates an UnversionedType from the given *pbresource.Type.
 func UnversionedTypeFrom(t *pbresource.Type) UnversionedType {
-	if t != nil {
-		return UnversionedType{
-			Group: t.Group,
-			Kind:  t.Kind,
-		}
-	}
 	return UnversionedType{
+		Group: t.Group,
+		Kind:  t.Kind,
 	}
 }
 

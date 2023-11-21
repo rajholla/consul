@@ -280,17 +280,6 @@ func (this *POCListRequest_ListByNamePrefixRequest) UnmarshalJSON(b []byte) erro
 	return ResourceUnmarshaler.Unmarshal(b, this)
 }
 
-// MarshalJSON is a custom marshaler for POCListRequest_ListByTenancyRequest
-func (this *POCListRequest_ListByTenancyRequest) MarshalJSON() ([]byte, error) {
-	str, err := ResourceMarshaler.Marshal(this)
-	return []byte(str), err
-}
-
-// UnmarshalJSON is a custom unmarshaler for POCListRequest_ListByTenancyRequest
-func (this *POCListRequest_ListByTenancyRequest) UnmarshalJSON(b []byte) error {
-	return ResourceUnmarshaler.Unmarshal(b, this)
-}
-
 // MarshalJSON is a custom marshaler for POCListRequest_ListByOwnerRequest
 func (this *POCListRequest_ListByOwnerRequest) MarshalJSON() ([]byte, error) {
 	str, err := ResourceMarshaler.Marshal(this)

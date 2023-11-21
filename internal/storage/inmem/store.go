@@ -235,16 +235,9 @@ func pocListTxn(tx *memdb.Txn, q query) ([]*pbresource.Resource, error) {
 	var iter memdb.ResultIterator
 	var err error
 
-	if q.resourceType.Group == "" {
-		iter, err = tx.Get(tableNameResources, indexNameTenancy, q.tenancy)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		iter, err = tx.Get(tableNameResources, indexNameID+"_prefix", q)
-		if err != nil {
-			return nil, err
-		}
+	iter, err = tx.Get(tableNameResources, indexNameID+"_prefix", q)
+	if err != nil {
+		return nil, err
 	}
 
 	var res []*pbresource.Resource

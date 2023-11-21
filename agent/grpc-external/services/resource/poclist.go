@@ -25,8 +25,6 @@ func (s *Server) POCList(ctx context.Context, req *pbresource.POCListRequest) (*
 	case *pbresource.POCListRequest_FilterByType:
 		requestType = op.FilterByType.GetType()
 		requestTenancy = op.FilterByType.GetTenancy()
-	case *pbresource.POCListRequest_FilterByTenant:
-		requestTenancy = op.FilterByTenant.GetTenancy()
 	case *pbresource.POCListRequest_FilterByNamePrefix:
 		requestType = op.FilterByNamePrefix.GetType()
 		requestTenancy = op.FilterByNamePrefix.GetTenancy()	

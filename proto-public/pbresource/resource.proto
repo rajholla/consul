@@ -500,7 +500,6 @@ message POCListRequest {
   oneof Request {
     ListByTypeRequest filter_by_type = 2;
     ListByNamePrefixRequest filter_by_name_prefix = 3;
-    ListByTenancyRequest filter_by_tenant = 4;
     ListByOwnerRequest filter_by_owner = 5;
   }
 
@@ -513,10 +512,6 @@ message POCListRequest {
     Type type = 1;
     Tenancy tenancy = 2;
     string name_prefix = 3;
-  }
-
-  message ListByTenancyRequest {
-    Tenancy tenancy = 1;
   }
 
   message ListByOwnerRequest {
